@@ -36,6 +36,10 @@ export interface Business {
   description: string;
   reviews: Review[];
   distanceKm?: number;
+  amenities?: string[];
+  coordinates?: { lat: number; lng: number };
+  regNumber?: string;
+  isOpenNow?: boolean;
 }
 
 export interface Category {

@@ -20,7 +20,10 @@ export const BottomNav: React.FC<BottomNavProps> = ({
         {/* Home */}
         <button
           type="button"
-          onClick={() => onNavigate('home')}
+          onClick={() => {
+            if ('vibrate' in navigator) navigator.vibrate(10);
+            onNavigate('home');
+          }}
           className={`min-h-[48px] flex flex-col items-center justify-center transition-colors ${
             activeScreen === 'home' ? 'text-rose-600 font-bold' : 'text-slate-500 hover:text-slate-800'
           }`}
@@ -32,7 +35,10 @@ export const BottomNav: React.FC<BottomNavProps> = ({
         {/* Categories */}
         <button
           type="button"
-          onClick={() => onNavigate('categories')}
+          onClick={() => {
+            if ('vibrate' in navigator) navigator.vibrate(10);
+            onNavigate('categories');
+          }}
           className={`min-h-[48px] flex flex-col items-center justify-center transition-colors ${
             activeScreen === 'categories' ? 'text-rose-600 font-bold' : 'text-slate-500 hover:text-slate-800'
           }`}
@@ -45,7 +51,10 @@ export const BottomNav: React.FC<BottomNavProps> = ({
         <div className="flex items-center justify-center">
           <button
             type="button"
-            onClick={onOpenAddBusiness}
+            onClick={() => {
+              if ('vibrate' in navigator) navigator.vibrate(15);
+              onOpenAddBusiness();
+            }}
             className="w-12 h-12 -mt-4 rounded-2xl bg-gradient-to-tr from-rose-600 to-red-600 text-white flex items-center justify-center shadow-lg shadow-rose-600/35 active:scale-95 transition-transform"
             aria-label="Add Business"
           >
@@ -56,7 +65,10 @@ export const BottomNav: React.FC<BottomNavProps> = ({
         {/* Search */}
         <button
           type="button"
-          onClick={() => onNavigate('search')}
+          onClick={() => {
+            if ('vibrate' in navigator) navigator.vibrate(10);
+            onNavigate('search');
+          }}
           className={`min-h-[48px] flex flex-col items-center justify-center transition-colors ${
             activeScreen === 'search' ? 'text-rose-600 font-bold' : 'text-slate-500 hover:text-slate-800'
           }`}
@@ -68,7 +80,10 @@ export const BottomNav: React.FC<BottomNavProps> = ({
         {/* Profile */}
         <button
           type="button"
-          onClick={() => onNavigate('profile')}
+          onClick={() => {
+            if ('vibrate' in navigator) navigator.vibrate(10);
+            onNavigate('profile');
+          }}
           className={`relative min-h-[48px] flex flex-col items-center justify-center transition-colors ${
             activeScreen === 'profile' ? 'text-rose-600 font-bold' : 'text-slate-500 hover:text-slate-800'
           }`}

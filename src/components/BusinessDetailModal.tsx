@@ -25,6 +25,7 @@ interface BusinessDetailModalProps {
   onCall: (business: Business) => void;
   onClose: () => void;
   onAddReview: (businessId: string, review: Omit<Review, 'id' | 'date'>) => void;
+  onOpenShare?: (business: Business) => void;
 }
 
 export const BusinessDetailModal: React.FC<BusinessDetailModalProps> = ({
@@ -33,7 +34,8 @@ export const BusinessDetailModal: React.FC<BusinessDetailModalProps> = ({
   onToggleFavorite,
   onCall,
   onClose,
-  onAddReview
+  onAddReview,
+  onOpenShare
 }) => {
   const [showReviewForm, setShowReviewForm] = useState(false);
   const [newRating, setNewRating] = useState(5);
@@ -46,6 +48,10 @@ export const BusinessDetailModal: React.FC<BusinessDetailModalProps> = ({
   if (!business) return null;
 
   const handleShare = () => {
+    if (onOpenShare) {
+      onOpenShare(business);
+      return;
+    }
     if (navigator.share) {
       navigator.share({
         title: `${business.name} - ONEAVCALL`,

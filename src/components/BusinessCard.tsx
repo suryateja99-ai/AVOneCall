@@ -1,5 +1,5 @@
 import React from 'react';
-import { Phone, Star, ShieldCheck, MapPin, Heart, ArrowUpRight } from 'lucide-react';
+import { Phone, Star, ShieldCheck, MapPin, Heart, ArrowUpRight, Share2, MessageSquare } from 'lucide-react';
 import { Business } from '../types';
 
 interface BusinessCardProps {
@@ -8,6 +8,7 @@ interface BusinessCardProps {
   onToggleFavorite: (id: string) => void;
   onCall: (business: Business) => void;
   onViewDetails: (business: Business) => void;
+  onShare?: (business: Business) => void;
 }
 
 export const BusinessCard: React.FC<BusinessCardProps> = ({
@@ -15,7 +16,8 @@ export const BusinessCard: React.FC<BusinessCardProps> = ({
   isFavorite,
   onToggleFavorite,
   onCall,
-  onViewDetails
+  onViewDetails,
+  onShare
 }) => {
   const [imgError, setImgError] = React.useState(false);
 
@@ -41,22 +43,38 @@ export const BusinessCard: React.FC<BusinessCardProps> = ({
         {/* Subtle Scrim */}
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950/75 via-slate-950/20 to-transparent pointer-events-none" />
 
-        {/* Favorite Button */}
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            onToggleFavorite(business.id);
-          }}
-          className={`absolute top-3 right-3 w-9 h-9 rounded-full flex items-center justify-center backdrop-blur-md transition-all ${
-            isFavorite
-              ? 'bg-rose-500 text-white shadow-md shadow-rose-500/30'
-              : 'bg-white/80 hover:bg-white text-slate-700'
-          }`}
-          aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
-        >
-          <Heart className={`w-4 h-4 ${isFavorite ? 'fill-current' : ''}`} />
-        </button>
+        {/* Header Controls: Share & Favorite */}
+        <div className="absolute top-3 right-3 flex items-center gap-1.5">
+          {onShare && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onShare(business);
+              }}
+              className="w-9 h-9 rounded-full bg-white/80 hover:bg-white text-slate-700 backdrop-blur-md flex items-center justify-center transition-all shadow-xs"
+              aria-label="Share contact card"
+            >
+              <Share2 className="w-3.5 h-3.5" />
+            </button>
+          )}
+
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleFavorite(business.id);
+            }}
+            className={`w-9 h-9 rounded-full flex items-center justify-center backdrop-blur-md transition-all ${
+              isFavorite
+                ? 'bg-rose-500 text-white shadow-md shadow-rose-500/30'
+                : 'bg-white/80 hover:bg-white text-slate-700'
+            }`}
+            aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+          >
+            <Heart className={`w-4 h-4 ${isFavorite ? 'fill-current' : ''}`} />
+          </button>
+        </div>
 
         {/* Category Icon Badge */}
         <div className="absolute bottom-3 left-3 flex items-center gap-2">
@@ -121,14 +139,18 @@ export const BusinessCard: React.FC<BusinessCardProps> = ({
             )}
           </div>
 
-          {/* Timing / Status */}
-          <p className="text-[11px] text-slate-500 mt-2 font-medium">
-            🕒 {business.openStatus}
-          </p>
+          {/* Timing / Status with pulsating indicator */}
+          <div className="flex items-center gap-1.5 text-[11px] mt-2 font-medium">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+            </span>
+            <span className="text-slate-700 truncate">{business.openStatus}</span>
+          </div>
 
           {/* Tags */}
           {business.tags && business.tags.length > 0 && (
-            <div className="flex flex-wrap gap-1.5 mt-3">
+            <div className="flex flex-wrap gap-1.5 mt-2.5">
               {business.tags.slice(0, 2).map((tag, i) => (
                 <span
                   key={i}
@@ -147,20 +169,40 @@ export const BusinessCard: React.FC<BusinessCardProps> = ({
         </div>
 
         {/* Action Buttons */}
-        <div className="mt-4 pt-3 border-t border-slate-100 grid grid-cols-2 gap-2">
+        <div className="mt-4 pt-3 border-t border-slate-100 flex items-center gap-2">
           <button
             type="button"
-            onClick={() => onCall(business)}
-            className="h-10 px-3 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white font-semibold text-xs rounded-xl flex items-center justify-center gap-1.5 shadow-sm shadow-emerald-600/20 transition-all"
+            onClick={() => {
+              if ('vibrate' in navigator) navigator.vibrate(12);
+              onCall(business);
+            }}
+            className="flex-1 h-10 px-3 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white font-semibold text-xs rounded-xl flex items-center justify-center gap-1.5 shadow-sm shadow-emerald-600/20 transition-all"
           >
             <Phone className="w-3.5 h-3.5 fill-current" />
-            <span>Call Now</span>
+            <span className="whitespace-nowrap">Call Now</span>
           </button>
+
+          <a
+            href={`https://wa.me/91${business.whatsapp || business.phone}?text=Hello%2C%20inquiry%20regarding%20${encodeURIComponent(business.name)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => {
+              if ('vibrate' in navigator) navigator.vibrate(10);
+            }}
+            className="w-10 h-10 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-700 rounded-xl flex items-center justify-center transition-colors shrink-0"
+            title="Chat on WhatsApp"
+            aria-label="WhatsApp Chat"
+          >
+            <MessageSquare className="w-4 h-4" />
+          </a>
 
           <button
             type="button"
-            onClick={() => onViewDetails(business)}
-            className="h-10 px-3 bg-slate-100 hover:bg-rose-50 hover:text-rose-600 text-slate-700 font-semibold text-xs rounded-xl flex items-center justify-center gap-1 transition-colors"
+            onClick={() => {
+              if ('vibrate' in navigator) navigator.vibrate(10);
+              onViewDetails(business);
+            }}
+            className="h-10 px-3 bg-slate-100 hover:bg-rose-50 hover:text-rose-600 text-slate-700 font-semibold text-xs rounded-xl flex items-center justify-center gap-1 transition-colors shrink-0"
           >
             <span>Details</span>
             <ArrowUpRight className="w-3.5 h-3.5" />

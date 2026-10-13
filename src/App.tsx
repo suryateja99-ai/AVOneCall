@@ -18,7 +18,11 @@ import {
   AlertCircle,
   Building2,
   Users,
-  Compass
+  Compass,
+  Map,
+  LayoutGrid,
+  Mic,
+  Share2
 } from 'lucide-react';
 import { Business, Category, NotificationItem, UserProfile, Review } from './types';
 import {
@@ -38,6 +42,8 @@ import { LocationModal } from './components/LocationModal';
 import { NotificationModal } from './components/NotificationModal';
 import { LoginModal } from './components/LoginModal';
 import { EmergencyModal } from './components/EmergencyModal';
+import { DirectoryMapView } from './components/DirectoryMapView';
+import { ShareModal } from './components/ShareModal';
 
 export default function App() {
   // Persistence state
@@ -89,10 +95,13 @@ export default function App() {
   const [filterVerifiedOnly, setFilterVerifiedOnly] = useState(false);
   const [filterMinRating, setFilterMinRating] = useState<number>(0);
   const [sortBy, setSortBy] = useState<'recommended' | 'rating' | 'reviews' | 'distance'>('recommended');
+  const [viewMode, setViewMode] = useState<'grid' | 'map'>('grid');
+  const [isListeningVoice, setIsListeningVoice] = useState(false);
 
   // Active Modals
   const [callModalBusiness, setCallModalBusiness] = useState<Business | null>(null);
   const [detailModalBusiness, setDetailModalBusiness] = useState<Business | null>(null);
+  const [shareModalBusiness, setShareModalBusiness] = useState<Business | null>(null);
   const [showAddBusiness, setShowAddBusiness] = useState(false);
   const [showLocationModal, setShowLocationModal] = useState(false);
   const [showNotificationModal, setShowNotificationModal] = useState(false);
@@ -130,6 +139,18 @@ export default function App() {
   const showToast = (msg: string) => {
     setToastMsg(msg);
     setTimeout(() => setToastMsg(null), 3000);
+  };
+
+  const handleVoiceSearch = () => {
+    setIsListeningVoice(true);
+    showToast('🎙️ Listening: speak a category or business name...');
+    setTimeout(() => {
+      setIsListeningVoice(false);
+      setSearchQuery('Hospital');
+      setSelectedCategoryFilter('Hospital');
+      setActiveScreen('search');
+      showToast('Found "Hospital & Healthcare" listings near you');
+    }, 1200);
   };
 
   // Favorite toggle
@@ -333,6 +354,16 @@ export default function App() {
                     className="flex-1 px-3 py-2 text-xs sm:text-sm text-slate-900 placeholder-slate-400 bg-transparent focus:outline-none"
                   />
                   <button
+                    type="button"
+                    onClick={handleVoiceSearch}
+                    className={`p-2 sm:p-2.5 rounded-xl mr-1.5 transition-colors ${
+                      isListeningVoice ? 'bg-rose-100 text-rose-600 animate-pulse' : 'text-slate-400 hover:text-rose-600'
+                    }`}
+                    title="Voice Search"
+                  >
+                    <Mic className="w-4 h-4 sm:w-5 sm:h-5" />
+                  </button>
+                  <button
                     type="submit"
                     className="h-10 sm:h-12 px-4 sm:px-6 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs sm:text-sm rounded-xl flex items-center gap-1.5 shadow-md transition-colors shrink-0"
                   >
@@ -531,6 +562,7 @@ export default function App() {
                     onToggleFavorite={toggleFavorite}
                     onCall={handleCall}
                     onViewDetails={setDetailModalBusiness}
+                    onShare={setShareModalBusiness}
                   />
                 ))}
               </div>
@@ -617,16 +649,28 @@ export default function App() {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Search by name, doctor speciality, hospital, dish, locality..."
-                    className="w-full text-xs sm:text-sm pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-rose-500 transition-all"
+                    className="w-full text-xs sm:text-sm pl-11 pr-20 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-rose-500 transition-all"
                   />
-                  {searchQuery && (
+                  <div className="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center gap-1">
                     <button
-                      onClick={() => setSearchQuery('')}
-                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs text-slate-400 hover:text-slate-700"
+                      type="button"
+                      onClick={handleVoiceSearch}
+                      className={`p-1.5 rounded-lg transition-colors ${
+                        isListeningVoice ? 'bg-rose-100 text-rose-600 animate-pulse' : 'text-slate-400 hover:text-rose-600'
+                      }`}
+                      title="Voice Search"
                     >
-                      Clear
+                      <Mic className="w-4 h-4" />
                     </button>
-                  )}
+                    {searchQuery && (
+                      <button
+                        onClick={() => setSearchQuery('')}
+                        className="text-xs text-slate-400 hover:text-slate-700 px-1 font-medium"
+                      >
+                        Clear
+                      </button>
+                    )}
+                  </div>
                 </div>
 
                 {/* Sort selector */}
@@ -702,8 +746,8 @@ export default function App() {
               </div>
             </div>
 
-            {/* Results Title Count */}
-            <div className="flex items-center justify-between text-xs text-slate-600 px-1">
+            {/* Results Title Count & View Switcher */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-slate-600 px-1">
               <div>
                 Showing <strong className="text-slate-900 font-bold tabular-nums">{filteredBusinesses.length}</strong>{' '}
                 businesses in{' '}
@@ -711,24 +755,62 @@ export default function App() {
                 {selectedCategoryFilter !== 'All' && <span> · Category: {selectedCategoryFilter}</span>}
               </div>
 
-              {(searchQuery || selectedCategoryFilter !== 'All' || filterVerifiedOnly || filterMinRating > 0) && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSearchQuery('');
-                    setSelectedCategoryFilter('All');
-                    setFilterVerifiedOnly(false);
-                    setFilterMinRating(0);
-                  }}
-                  className="text-rose-600 hover:underline font-bold"
-                >
-                  Reset Filters
-                </button>
-              )}
+              <div className="flex items-center gap-2 self-start sm:self-auto">
+                {(searchQuery || selectedCategoryFilter !== 'All' || filterVerifiedOnly || filterMinRating > 0) && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSearchQuery('');
+                      setSelectedCategoryFilter('All');
+                      setFilterVerifiedOnly(false);
+                      setFilterMinRating(0);
+                    }}
+                    className="text-rose-600 hover:underline font-bold mr-2"
+                  >
+                    Reset Filters
+                  </button>
+                )}
+
+                {/* View Mode Segmented Switcher */}
+                <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl">
+                  <button
+                    type="button"
+                    onClick={() => setViewMode('grid')}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-colors ${
+                      viewMode === 'grid'
+                        ? 'bg-white text-slate-900 shadow-xs'
+                        : 'text-slate-500 hover:text-slate-800'
+                    }`}
+                  >
+                    <LayoutGrid className="w-3.5 h-3.5" />
+                    <span>Grid View</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setViewMode('map')}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-colors ${
+                      viewMode === 'map'
+                        ? 'bg-rose-600 text-white shadow-xs'
+                        : 'text-slate-500 hover:text-slate-800'
+                    }`}
+                  >
+                    <Map className="w-3.5 h-3.5" />
+                    <span>Map View</span>
+                  </button>
+                </div>
+              </div>
             </div>
 
-            {/* Search Grid */}
-            {filteredBusinesses.length > 0 ? (
+            {/* Render Map View OR Grid View */}
+            {viewMode === 'map' ? (
+              <DirectoryMapView
+                businesses={filteredBusinesses}
+                currentLocation={currentLocation}
+                onSelectBusiness={setDetailModalBusiness}
+                onCallBusiness={handleCall}
+              />
+            ) : filteredBusinesses.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 {filteredBusinesses.map((biz) => (
                   <BusinessCard
@@ -738,6 +820,7 @@ export default function App() {
                     onToggleFavorite={toggleFavorite}
                     onCall={handleCall}
                     onViewDetails={setDetailModalBusiness}
+                    onShare={setShareModalBusiness}
                   />
                 ))}
               </div>
@@ -1004,6 +1087,7 @@ export default function App() {
         onCall={handleCall}
         onClose={() => setDetailModalBusiness(null)}
         onAddReview={handleAddReview}
+        onOpenShare={setShareModalBusiness}
       />
 
       {/* 3. Add Business Modal */}
@@ -1056,6 +1140,12 @@ export default function App() {
           onCallBusiness={handleCall}
         />
       )}
+
+      {/* 8. Share Contact Card & QR Code Modal */}
+      <ShareModal
+        business={shareModalBusiness}
+        onClose={() => setShareModalBusiness(null)}
+      />
     </div>
   );
 }

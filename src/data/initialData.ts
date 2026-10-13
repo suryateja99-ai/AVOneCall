@@ -3,12 +3,16 @@ import HERO_BANNER_IMAGE from '../assets/images/hero_city_services_1791874410067
 import EMERGENCY_BANNER_IMAGE from '../assets/images/banner_emergency_help_1791874410875.jpg';
 import DOCTOR_IMAGE from '../assets/images/doctor_medical_care_1791874409976.jpg';
 import RESTAURANT_IMAGE from '../assets/images/restaurant_fine_dining_1791874410396.jpg';
+import AUTO_IMAGE from '../assets/images/automobile_modern_service_1791886129494.jpg';
+import HOTEL_IMAGE from '../assets/images/hotel_luxury_suite_1791886129240.jpg';
 
 export {
   HERO_BANNER_IMAGE,
   EMERGENCY_BANNER_IMAGE,
   DOCTOR_IMAGE,
-  RESTAURANT_IMAGE
+  RESTAURANT_IMAGE,
+  AUTO_IMAGE,
+  HOTEL_IMAGE
 };
 
 export const INITIAL_CATEGORIES: Category[] = [
@@ -341,7 +345,7 @@ export const INITIAL_BUSINESSES: Business[] = [
     reviewCount: 156,
     verified: true,
     openStatus: 'Open 24/7 Front Desk',
-    image: RESTAURANT_IMAGE,
+    image: HOTEL_IMAGE,
     icon: '🏨',
     tags: ['Executive AC Rooms', '500-Pax Banquet Hall', 'Complimentary Breakfast', 'Free High Speed WiFi', 'Airport Pickup'],
     timings: '24/7 Check-in Available',
@@ -449,7 +453,7 @@ export const INITIAL_BUSINESSES: Business[] = [
     reviewCount: 114,
     verified: true,
     openStatus: 'Open Now · Closes 8:00 PM',
-    image: HERO_BANNER_IMAGE,
+    image: AUTO_IMAGE,
     icon: '🚗',
     tags: ['Computerized Wheel Alignment', 'Engine Diagnostic Scanner', '3M Teflon Coating', 'AC Gas Recharge', 'Original Spares'],
     timings: '8:30 AM – 8:00 PM Mon-Sat',

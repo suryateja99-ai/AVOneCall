@@ -78,6 +78,9 @@ export const CallModal: React.FC<CallModalProps> = ({ business, onClose }) => {
           <div className="space-y-2.5 pt-1">
             <a
               href={`tel:${business.phone}`}
+              onClick={() => {
+                if ('vibrate' in navigator) navigator.vibrate(20);
+              }}
               className="w-full h-13 py-3.5 px-4 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.99] text-white rounded-xl font-semibold flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/25 transition-all text-sm"
             >
               <PhoneCall className="w-5 h-5" />
