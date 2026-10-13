@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, Building2, Phone, MapPin, Check, Sparkles, Clock, Tag } from 'lucide-react';
 import { Business, Category } from '../types';
+import { HERO_BANNER_IMAGE } from '../data/initialData';
 
 interface AddBusinessModalProps {
   categories: Category[];
@@ -89,7 +90,7 @@ export const AddBusinessModal: React.FC<AddBusinessModalProps> = ({
       reviewCount: 1,
       verified: true,
       openStatus: 'Open Now · Verified Listing',
-      image: '/src/assets/images/hero_city_services_1791874410067.jpg',
+      image: HERO_BANNER_IMAGE,
       icon: currentCategoryObj?.icon || '🏢',
       tags: tagsArray.length > 0 ? tagsArray : ['Local Service', 'Verified'],
       timings: formData.timings || '9:00 AM – 8:00 PM',

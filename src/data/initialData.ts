@@ -1,9 +1,15 @@
 import { Business, Category, NotificationItem } from '../types';
+import HERO_BANNER_IMAGE from '../assets/images/hero_city_services_1791874410067.jpg';
+import EMERGENCY_BANNER_IMAGE from '../assets/images/banner_emergency_help_1791874410875.jpg';
+import DOCTOR_IMAGE from '../assets/images/doctor_medical_care_1791874409976.jpg';
+import RESTAURANT_IMAGE from '../assets/images/restaurant_fine_dining_1791874410396.jpg';
 
-export const HERO_BANNER_IMAGE = '/src/assets/images/hero_city_services_1791874410067.jpg';
-export const EMERGENCY_BANNER_IMAGE = '/src/assets/images/banner_emergency_help_1791874410875.jpg';
-export const DOCTOR_IMAGE = '/src/assets/images/doctor_medical_care_1791874409976.jpg';
-export const RESTAURANT_IMAGE = '/src/assets/images/restaurant_fine_dining_1791874410396.jpg';
+export {
+  HERO_BANNER_IMAGE,
+  EMERGENCY_BANNER_IMAGE,
+  DOCTOR_IMAGE,
+  RESTAURANT_IMAGE
+};
 
 export const INITIAL_CATEGORIES: Category[] = [
   {

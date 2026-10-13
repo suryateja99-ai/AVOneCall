@@ -17,23 +17,29 @@ export const BusinessCard: React.FC<BusinessCardProps> = ({
   onCall,
   onViewDetails
 }) => {
+  const [imgError, setImgError] = React.useState(false);
+
   return (
     <article className="group bg-white rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden flex flex-col">
       {/* Top Media / Header */}
-      <div className="relative aspect-[16/9] w-full overflow-hidden bg-slate-100">
-        <img
-          src={business.image}
-          alt={business.name}
-          referrerPolicy="no-referrer"
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-          onError={(e) => {
-            // Resilient fallback if image fails to load
-            (e.target as HTMLElement).style.display = 'none';
-          }}
-        />
+      <div className="relative aspect-[16/9] w-full overflow-hidden bg-gradient-to-br from-slate-800 to-slate-950">
+        {!imgError && business.image ? (
+          <img
+            src={business.image}
+            alt={business.name}
+            referrerPolicy="no-referrer"
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            onError={() => setImgError(true)}
+          />
+        ) : (
+          <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-rose-900/40 via-slate-900 to-slate-950 p-4 text-center">
+            <span className="text-4xl drop-shadow-md mb-1">{business.icon}</span>
+            <span className="text-[11px] font-bold text-rose-200 uppercase tracking-wider">{business.category}</span>
+          </div>
+        )}
         
         {/* Subtle Scrim */}
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-950/20 to-transparent pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/75 via-slate-950/20 to-transparent pointer-events-none" />
 
         {/* Favorite Button */}
         <button

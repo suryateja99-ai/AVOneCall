@@ -41,6 +41,8 @@ export const BusinessDetailModal: React.FC<BusinessDetailModalProps> = ({
   const [newComment, setNewComment] = useState('');
   const [shareToast, setShareToast] = useState(false);
 
+  const [detailImgError, setDetailImgError] = useState(false);
+
   if (!business) return null;
 
   const handleShare = () => {
@@ -85,13 +87,21 @@ export const BusinessDetailModal: React.FC<BusinessDetailModalProps> = ({
       >
         {/* Header Media */}
         <div className="relative h-56 sm:h-64 w-full bg-slate-900 shrink-0">
-          <img
-            src={business.image}
-            alt={business.name}
-            referrerPolicy="no-referrer"
-            className="w-full h-full object-cover opacity-85"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/40 to-transparent" />
+          {!detailImgError && business.image ? (
+            <img
+              src={business.image}
+              alt={business.name}
+              referrerPolicy="no-referrer"
+              className="w-full h-full object-cover opacity-85"
+              onError={() => setDetailImgError(true)}
+            />
+          ) : (
+            <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-rose-950 via-slate-900 to-black p-6 text-center">
+              <span className="text-5xl drop-shadow-md mb-2">{business.icon}</span>
+              <span className="text-xs font-bold text-rose-300 uppercase tracking-widest">{business.category}</span>
+            </div>
+          )}
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/40 to-transparent pointer-events-none" />
 
           {/* Navigation controls on header */}
           <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
