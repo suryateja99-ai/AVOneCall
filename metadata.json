@@ -1,0 +1,7 @@
+{
+  "name": "ONEAVCALL - Local Business & Services Directory",
+  "description": "Find, connect, and call verified local businesses, doctors, emergency services, and professionals near you.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+
